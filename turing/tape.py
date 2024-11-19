@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-class TuringMachine:
+class Tape:
     def __init__(self, s, default_symbol=' '):
         """
         Initializes the Turing machine tape.
@@ -12,7 +12,7 @@ class TuringMachine:
         self.head_position = 0  # Start the tape head at position 0
         self.initialize_tape(s)
     
-    def initialize_tape(self, s):
+    def initialize_tape(self, s: str):
         """
         Initializes the tape with the given string and sets the head to the first character.
         
@@ -55,16 +55,3 @@ class TuringMachine:
         tape_str = ''.join(self.tape[i] for i in range(min_pos, max_pos + 1))
         head_indicator = ' ' * (self.head_position - min_pos) + '^'
         return f"Tape: {tape_str}\n      {head_indicator}"
-
-
-# # Example Usage
-# tape = TuringMachineTape()
-# print(tape)  # Initially empty tape
-
-# tape.write('1')
-# tape.move('R')
-# tape.write('0')
-# tape.move('R')
-# tape.write('1')
-# tape.move('L')
-# print(tape)  # Shows a segment of the tape
