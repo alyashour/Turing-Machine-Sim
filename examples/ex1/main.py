@@ -8,7 +8,7 @@ MAX_ITERATIONS = 5000
 
 class TM1(TuringMachine):
     def __init__(self):
-        super().__init__(q0, min_length=5, max_length=50)
+        super().__init__(q0, min_gen_str_len=5, max_gen_str_len=50)
 
     def gen_random_tape(self):
         if self.min_length > self.max_length or self.min_length < 0:
@@ -51,7 +51,7 @@ class TM1(TuringMachine):
         a, b, c = 0, 0, 0
         last_char = 'a'
         if string[0] != 'a':
-            return "Reject"
+            return REJECT
         for char in string:
             if char == 'a' and last_char == 'a':
                 a = a + 1
@@ -61,8 +61,14 @@ class TM1(TuringMachine):
             elif char == 'c' and last_char in ['b', 'c']:
                 c = c + 1
                 last_char = 'c'
-        return "Accept" if a + b == c else "Reject"
+        return ACCEPT if a + b == c else REJECT
 
 if __name__ == "__main__":
     tm = TM1()
+
+    # run a single test
+    tape = Tape('aababcbabcbcaccbaccacabcbbacabbcaccacbaaccbabcabbb') # create the tape
+    tm.resolve(tape, debug=True)
+
+    # run many iterations
     tm.main()

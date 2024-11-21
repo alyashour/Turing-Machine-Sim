@@ -1,11 +1,18 @@
 import argparse
 from typing import Callable, Tuple
 from abc import ABC, abstractmethod
+from unittest.mock import DEFAULT
 
+from turing import REJECT, ACCEPT
 from .tape import Tape
 
+DEFAULT_STR_MIN_LENGTH = 3
+DEFAULT_STR_MAX_LENGTH = 5
+DEFAULT_MAX_TESTS = 50
+DEFAULT_MAX_ITERATIONS = 5000
+
 class TuringError(Exception):
-    """Base class for Turing Machine Errors"""
+    """Base class for Turing Machine Errors."""
     pass
 
 class StateTransitionError(TuringError):
@@ -23,11 +30,15 @@ class TooManyIterationsError(TuringError):
     pass
 
 class TuringMachine(ABC):
-    def __init__(self, starting_state: Callable[[str], Tuple[str, str, Callable]], 
-    min_length: int = 3, max_length: int = 500, max_tests: int = 50, max_iterations: int = 500):
+    def __init__(self, starting_state: Callable[[str], Tuple[str, str, Callable]],
+                 min_gen_str_len: int = DEFAULT_STR_MIN_LENGTH,
+                 max_gen_str_len: int = DEFAULT_STR_MAX_LENGTH,
+                 max_tests: int = DEFAULT_MAX_TESTS,
+                 max_iterations: int = DEFAULT_MAX_ITERATIONS
+                 ):
         self.starting_state = starting_state
-        self.min_length = min_length
-        self.max_length = max_length
+        self.min_length = min_gen_str_len
+        self.max_length = max_gen_str_len
         self.max_tests = max_tests
         self.max_iterations = max_iterations
 
@@ -48,14 +59,20 @@ class TuringMachine(ABC):
         pass
 
     def resolve(self, tape, debug=False):
+        """
+        Resolves a single tape and returns the result (accept or reject)
+        """
+        # save input str
+        input_str = tape.message(do_format=False)
+
         # setup tm
         state = self.starting_state
         iterations = 0
 
         # start loop
         while iterations < self.max_iterations:
-            if debug:
-                print(state.__name__, tape.read())
+            if debug: # print the tape before
+                print(f'{state.__name__}(\'{tape.read()}\')')
                 print(tape)
             
             z = state(tape.read())
@@ -66,18 +83,27 @@ class TuringMachine(ABC):
             
             #update state
             state = new_state
-            if state == "Reject" or state == "Accept":
+            if state == REJECT or state == ACCEPT:
                 result = state
+
+                if debug:
+                    expected = self.check(input_str)
+                    if expected == result:
+                        print('✅', 'expected:', expected, 'result:', result)
+                    else:
+                        print('❌', 'expected:', expected, 'result:', result)
+                        print('input:', input_str)
+
                 return result
 
             # update tape
             tape.write(c)
             tape.move(direction)
-            
+
             # update count
             iterations = iterations + 1
-
-        raise TooManyIterationsError()
+        message = f'Too many iterations on tape: {input_str}.\nUse turingmachine.resolve({input_str}, debug=True) to see where the problem is.'
+        raise TooManyIterationsError(message)
 
     def main(self):
         # Set up argument parser
@@ -100,12 +126,14 @@ class TuringMachine(ABC):
 
             # loop over the tests
             while test_count < self.max_tests:
-                # do the calculation
+                # create the tape
                 tape = self.gen_tape()
+                generated_str = tape.__str__()
+
+                # do the calculation
                 result = self.resolve(tape)
 
                 # get correct answer
-                generated_str = tape.__str__()
                 expected = self.check(generated_str)
 
                 # print result

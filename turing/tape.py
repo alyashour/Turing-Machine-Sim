@@ -1,3 +1,4 @@
+from turing import LEFT, RIGHT
 from collections import defaultdict
 
 class Tape:
@@ -38,20 +39,23 @@ class Tape:
         Parameters:
             direction (str): 'L' to move left, 'R' to move right.
         """
-        if direction == 'L':
+        if direction == LEFT:
             self.head_position -= 1
-        elif direction == 'R':
+        elif direction == RIGHT:
             self.head_position += 1
         else:
             raise ValueError("Direction must be 'L' (left) or 'R' (right).")
 
-    def __str__(self):
-        """
-        Returns a string representation of the tape for debugging.
-        Shows a limited segment around the head.
-        """
+    def message(self, do_format):
         min_pos = min(self.tape.keys())
         max_pos = max(self.tape.keys())
         tape_str = ''.join(self.tape[i] for i in range(min_pos, max_pos + 1))
         head_indicator = ' ' * (self.head_position - min_pos) + '^'
-        return f"Tape: {tape_str}\n      {head_indicator}"
+
+        if do_format:
+            return f"Tape: {tape_str}\n      {head_indicator}"
+        else:
+            return tape_str
+
+    def __str__(self):
+        return self.message(do_format=True)
