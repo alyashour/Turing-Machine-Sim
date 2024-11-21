@@ -79,7 +79,7 @@ class TuringMachine(ABC):
             try:
                 c, direction, new_state = z
             except Exception:
-                raise StateTransitionError(f'in state {state.__name__}, input={tape.read()}\n{tape.__str__()}')
+                raise StateTransitionError(f'in state {state.__name__}, input={tape.read()}\n{tape.__str__()}\nInitial String: {input_str}')
             
             #update state
             state = new_state
