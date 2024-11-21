@@ -7,9 +7,9 @@ from turing import REJECT, ACCEPT
 from .tape import Tape
 
 DEFAULT_STR_MIN_LENGTH = 3
-DEFAULT_STR_MAX_LENGTH = 5
+DEFAULT_STR_MAX_LENGTH = 500
 DEFAULT_MAX_TESTS = 50
-DEFAULT_MAX_ITERATIONS = 5000
+DEFAULT_MAX_ITERATIONS = 5000000
 
 class TuringError(Exception):
     """Base class for Turing Machine Errors."""
@@ -39,7 +39,7 @@ class TuringMachine(ABC):
         self.starting_state = starting_state
         self.min_length = min_gen_str_len
         self.max_length = max_gen_str_len
-        self.max_tests = max_tests
+        self.num_tests = max_tests
         self.max_iterations = max_iterations
 
     @abstractmethod
@@ -125,7 +125,7 @@ class TuringMachine(ABC):
             test_count, correct, incorrect = 0, 0, 0
 
             # loop over the tests
-            while test_count < self.max_tests:
+            while test_count < self.num_tests:
                 # create the tape
                 tape = self.gen_tape()
                 generated_str = tape.__str__()

@@ -4,11 +4,9 @@ from turing.turing_machine import TuringMachine
 from turing.tape import Tape
 from states import *
 
-MAX_ITERATIONS = 5000
-
 class TM1(TuringMachine):
     def __init__(self):
-        super().__init__(q0, min_gen_str_len=5, max_gen_str_len=50)
+        super().__init__(q0, min_gen_str_len=5, max_gen_str_len=500, max_tests=5000)
 
     def gen_random_tape(self):
         if self.min_length > self.max_length or self.min_length < 0:

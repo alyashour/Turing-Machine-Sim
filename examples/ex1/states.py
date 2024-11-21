@@ -66,3 +66,5 @@ def q8(c):
         return 'x', RIGHT, q5
     if c == ' ':
         return c, RIGHT, qaccept
+    if c == 'x':
+        return c, RIGHT, q8
