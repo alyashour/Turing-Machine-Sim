@@ -4,6 +4,10 @@ This project is a Turing Machine simulator designed for testing and validating s
 It provides a flexible environment for defining, running, and debugging Turing Machine models with automatic testing, performance tracking, and error reporting.
 I needed it while checking my solutions while learning computational theory in one of my courses!
 
+## Examples
+
+Take a look at `examples/ex1` to see how I used this to test my design for a TM that identifies the language $L = \{a^nb^mc^{(m+n)}:m,n>0\}$!
+
 ### Key Features
 
 - **State-Based Computation**: Define your own Turing Machine by specifying the states and transitions. This allows for testing different types of Turing Machine logic, from simple string recognition to more complex automata.
